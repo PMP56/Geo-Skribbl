@@ -1,0 +1,80 @@
+.canvas-body{
+    height: 70%;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+}
+
+.toolbox{
+    background-color: rgba(255, 255, 255, 0.8);
+    margin-right: 10px;
+    width: 60px;
+    height: 95%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+}
+
+.toolbox-icon{
+    cursor: pointer;
+    padding: 5px;
+    color: black;
+    font-size: 36px;
+}
+
+.toolbox-icon:hover{
+    background-color: #222;
+    color: white;
+    width: max-content;
+    height: max-content;
+}
+
+.color-container{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.color-row{
+    display: flex;
+    flex-direction: row;
+}
+
+.size-container{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.colorBox{
+    margin: 2px 0px;
+    transition-duration: 0.2s;
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    border-radius: 2px;
+}
+
+.sizeBox{
+    cursor: pointer;
+    position: relative;
+    width: 30px;
+    height: 30px;
+    text-align: center;
+    margin: 5px 5px;
+}
+
+.size{
+    position: absolute;
+    top: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.canvas-container{
+    background-color: white;
+    height: 100%;
+    width: 100%;
+    border: 2px solid black;
+}

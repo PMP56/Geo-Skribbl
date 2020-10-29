@@ -6,8 +6,7 @@
   "scripts": {
     "dev": "webpack --mode development --watch ./src/index.js",
     "build": "webpack --mode production ./src/index.js",
-    "wexpress": "nodemon ./server/server.js",
-    "express": "node ./server/server.js"
+    "express": "nodemon ./server/server.js"
   },
   "keywords": [],
   "author": "",

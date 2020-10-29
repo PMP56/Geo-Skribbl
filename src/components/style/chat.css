@@ -11,6 +11,13 @@
     overflow-y: scroll;
 }
 
+.chat-top{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
 .chat-tile{
     height: 10vh;
     margin: 10px;

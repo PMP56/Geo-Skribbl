@@ -49,6 +49,10 @@ const Canvas = () => {
             context.current.lineTo(x, y);
             context.current.stroke();
         })
+
+        socket.on('clear', () => {
+            context.current.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
+        })
     }, [isDrawing, setIsDrawing]);
 
 
@@ -74,7 +78,7 @@ const Canvas = () => {
     }
 
     const clearCanvas = () => {
-        context.current.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
+        socket.emit('clear');
     }
 
     return (

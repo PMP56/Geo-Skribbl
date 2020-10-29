@@ -20,6 +20,10 @@ io.on('connection', (socket) => {
         io.emit('chat', chat);
     });
 
+    socket.on('clear', () => {
+        io.emit('clear');
+    });
+
     socket.on('mouseDown', (data) => {
         io.emit('mouseDown', data);
     });

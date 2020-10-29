@@ -6,21 +6,31 @@ const socket = io();
 
 
 const Chat = () => {
-
     const [chats, setChats] = useState([]);
+
     useEffect(() => {
         socket.on('message', message => {
+            const date = new Date();
+            const hour = date.getHours();
+            const minute = "0" + date.getMinutes();
+
+            let formatTime = `${hour} : ${minute.substr(-2)}`;
             setChats(prevVal => ([
                 ...prevVal,
-                { username: 'Bot', message: message }
+                { username: 'Bot', message: message, time: formatTime }
             ]));
             const chats = document.querySelector('.chats');
             chats.scrollTop = chats.scrollHeight;
         })
         socket.on('chat', chat => {
+            const date = new Date();
+            const hour = date.getHours();
+            const minute = "0" + date.getMinutes();
+
+            let formatTime = `${hour} : ${minute.substr(-2)}`;
             setChats(prevVal => ([
                 ...prevVal,
-                { username: 'LORD', message: chat }
+                { username: 'LORD', message: chat, time: formatTime }
             ]));
             const chats = document.querySelector('.chats');
             chats.scrollTop = chats.scrollHeight;
@@ -59,7 +69,10 @@ const Chat = () => {
         //console.log(props)
         return (
             <div className='chat-tile'>
-                <h5 className='chat-header'>{props.data.username}</h5>
+                <div className='chat-top'>
+                    <h5 className='chat-header'>{props.data.username}</h5>
+                    <h6 className='chat-subheader'>{props.data.time}</h6>
+                </div>
                 <h6 className='chat-subheader'>{props.data.message}</h6>
             </div>
 

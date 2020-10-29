@@ -7,8 +7,6 @@ const app = express();
 const server = http.createServer(app);
 const io = socket(server);
 
-app.use(express.static(path.join(__dirname, '../public')));
-
 io.on('connection', (socket) => {
     //console.log('A user connected');
     socket.emit('message', 'Welcome to Geo Skribbl');
@@ -32,6 +30,8 @@ io.on('connection', (socket) => {
         io.emit('mouseUp');
     });
 })
+
+app.use(express.static(path.join(__dirname, '../public')));
 
 const PORT = process.env.PORT || 5050;
 server.listen(PORT, () => {

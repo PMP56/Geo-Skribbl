@@ -14,19 +14,21 @@ const Chat = () => {
                 ...prevVal,
                 { username: 'Bot', message: message }
             ]));
+            const chats = document.querySelector('.chats');
+            chats.scrollTop = chats.scrollHeight;
         })
         socket.on('chat', chat => {
             setChats(prevVal => ([
                 ...prevVal,
                 { username: 'LORD', message: chat }
-            ]))
+            ]));
             const chats = document.querySelector('.chats');
             chats.scrollTop = chats.scrollHeight;
             //users.push({ username: 'LORD', message: chat })
             // console.log(chat)
             // console.log(chats)
         })
-    }, [0])
+    }, [])
 
 
     const [msg, setMsg] = useState('');

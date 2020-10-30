@@ -88,7 +88,7 @@ const Chat = () => {
                     )
                 }
             </div>
-            <div className='formbox'>
+            <div className='formbox-chat'>
                 <input className='chat-input' type='text' value={msg} onChange={textChange} onKeyDown={enter} autoFocus></input>
                 <SendIcon className='send-button' onClick={submit} />
             </div>

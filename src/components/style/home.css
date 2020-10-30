@@ -1,0 +1,232 @@
+@import url('https://fonts.googleapis.com/css2?family=Architects+Daughter&display=swap');
+
+body{
+    margin: 0px;
+}
+
+.home{
+    background: url('https://i.pinimg.com/originals/c8/5f/79/c85f791d5620af4f879f48565ec5dede.jpg');
+    background-position: center;
+    background-size: contain;
+    height: 100vh;
+    width: 100vw;
+    overflow: hidden;
+    transition-duration: 0.3s;
+}
+
+.overlay{
+    z-index: 1;
+    position: absolute;
+    top: 0px;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(60, 253, 137, 0.5);
+    /* background: linear-gradient(45deg, rgba(255, 0, 0, 0.3), rgba(255, 255, 0, 0.3)); */
+}
+
+.title{
+    position: relative;
+    z-index: 10;
+    display: flex;
+    justify-content: center;
+}
+
+.title-letter{
+    --rotation1: 0deg;
+    font-family: 'Architects Daughter';
+    color: var(--textcolor);
+    font-size: 85px;
+    text-align: center;
+    text-shadow: 5px 5px 5px #000000;
+    margin: 5px;
+    margin-top: 10px;
+    animation-name: letters;
+    animation-duration: var(--time);
+    animation-iteration-count: infinite;
+}
+
+.formbox{
+    position: relative;
+    z-index: 10;
+    display: flex;
+    flex-direction: row;
+}
+
+.form1{
+    background: url('https://www.textures.com/system/gallery/photos/Fabric/Plain%20Fabric/879/FabricPlain0020_2_download600.jpg');
+    background-position: center;
+    background-size: contain;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10;
+    width: 400px;
+    margin: auto;
+    margin-top: 100px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    box-shadow: 10px 10px 10px #444444;
+    border: 2px solid rgb(54, 54, 54);
+    transition-duration: 0.3s;
+}
+.form2{
+    background: url('https://www.textures.com/system/gallery/photos/Fabric/Plain%20Fabric/879/FabricPlain0020_2_download600.jpg');
+    background-position: center;
+    background-size: contain;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 400px;
+    margin: auto;
+    margin-top: 100px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    box-shadow: 10px 10px 20px #444444;
+    border: 2px solid rgb(54, 54, 54);
+    transition-duration: 0.3s;
+}
+
+.doodle1{
+    position: absolute;
+    width: 100px;
+    top: -81px;
+    right: 0px;
+}
+.doodle2{
+    position: absolute;
+    width: 100px;
+    top: -96px;
+    left: -27px;
+}
+
+
+.section{
+    margin: 15px 0px 0px 0px;
+    width: 100%;
+}
+
+.form-header{
+    margin: 0px;
+    font-size: 16px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    margin-left: 20px;
+}
+
+.name-field{
+    margin: 5px 0px 5px 20px;
+    width: 80%;
+    height: 30px;
+    border: 2px solid gray;
+    border-radius: 5px;
+}
+
+.join-button{
+    margin-top: 20px;
+    width: 100%;
+    padding: 10px;
+    border: none;
+    color: white;
+    background-color: rgb(41, 187, 41);
+    cursor: pointer;
+    outline: none;
+}
+.join-button:hover{
+    color: white;
+    background-color: rgb(41, 167, 30);
+}
+.join-button:active{
+    color: white;
+    background-color: rgb(41, 147, 20);
+}
+.join-button:disabled{
+    color: white;
+    background-color: rgb(100, 100, 100);
+    cursor: not-allowed;
+}
+
+.create-button{
+    margin-top:2px;
+    width: 100%;
+    padding: 10px;
+    border: none;
+    color: white;
+    background-color: teal;
+    cursor: pointer;
+    outline: none;
+}
+.create-button:hover{
+    color: white;
+    background-color: rgb(0, 140, 140);
+}
+.create-button:active{
+    color: white;
+    background-color: rgb(0, 110, 110);
+}
+
+.room-form{
+    margin: 5px 20px;
+    width: 90%;
+    height: 30px;
+    background-color: white;
+    border-radius: 5px;
+    border: 2px solid gray;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.code-field{
+    width: 80%;
+    height: 28px;
+    border-radius: 5px;
+    border: none;
+    outline: none;
+}
+
+.code-copy{
+    height: 30px;
+    background-color: tomato;
+    padding: 0px 10px;
+    color: white;
+    border: none;
+    cursor: pointer;
+    outline: none;
+}
+.code-copy:hover{
+    background-color: rgb(255, 71, 38);
+}
+.code-copy:active{
+    background-color: rgb(255, 47, 10);
+}
+
+.player-container{
+    margin: 5px 20px;
+    width: 90%;
+    height: 110px;
+    background-color: white;
+}
+
+.loading{
+    z-index: 100;
+    color: darkred;
+    position: absolute;
+    left: 48%;
+    top: 50%;
+}
+
+@keyframes letters {
+    0% {
+        transform: rotate(var(--rotation1));
+    }
+    25% {
+        transform: rotate(var(--rotation2));
+    }
+    50% {
+        transform: rotate(var(--rotation3));
+    }
+    100% {
+        transform: rotate(var(--rotation4));
+    }
+}

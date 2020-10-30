@@ -1,15 +1,18 @@
 import React, { Component, Fragment } from 'react';
-import Canvas from './components/canvas/canvas';
-import Chat from './components/chat';
-
-import './App.css';
+import { Route, BrowserRouter as Router } from 'react-router-dom';
+import Home from './components/home';
+import Game from './components/game';
 
 const App = () => {
     return (
-        <div className='app-body'>
-            <Canvas />
-            <Chat />
-        </div>
+        <Router>
+            <Route exact path='/' component={Home} />
+            <Route path='/:code' component={Game} />
+        </Router>
+        // <div className='app-body'>
+        //     <Canvas />
+        //     <Chat />
+        // </div>
     );
 }
 

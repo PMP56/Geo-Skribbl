@@ -3,7 +3,7 @@ import React, { Component, useState, useEffect, useRef, Fragment } from 'react';
 import HighlightOffIcon from '@material-ui/icons/HighlightOff';
 import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
 
-import "../style/canvas.css";
+import "./style/canvas.css";
 const socket = io();
 
 const Canvas = () => {

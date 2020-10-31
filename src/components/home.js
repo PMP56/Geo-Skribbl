@@ -9,15 +9,18 @@ const Home = () => {
     const [username, setUsername] = useState('');
     const [roomcode, setRoomcode] = useState('');
     const [creating, setCreating] = useState(false);
+    const [joining, setJoining] = useState(false);
     const [expanded, setExpanded] = useState(false);
     const [genCode, setGenCode] = useState('');
-    //const [roomStat, setRoomStat] = useState({});
+    const [roomStat, setRoomStat] = useState({});
     const [players, setPlayers] = useState([]);
 
     useEffect(() => {
         socket.on('join', (room) => {
             console.log(room);
-            setPlayers(room);
+            setRoomStat(room);
+            setPlayers(room.members);
+            setRoomcode(room.code);
             // Object.entries(room).forEach((player, index) => {
             //     console.log(player)
             // })
@@ -59,6 +62,11 @@ const Home = () => {
 
     const joinRoom = () => {
         socket.emit('join', { code: roomcode, user: username });
+        setJoining(true);
+        setTimeout(() => {
+            expandForm();
+            setJoining(false);
+        }, 1000);
     }
 
     const createRoom = () => {
@@ -106,8 +114,8 @@ const Home = () => {
         let form1 = document.querySelector('.form1');
         let form2 = document.querySelector('.form2');
 
-        form1.style.left = `${form1.offsetLeft - 200}px`;
-        form2.style.left = `${form2.offsetLeft + 200}px`;
+        form1.style.left = '-50%';
+        form2.style.left = '50%';
         form2.style.height = `${form1.clientHeight} px`;
         setExpanded(true);
     }
@@ -116,9 +124,8 @@ const Home = () => {
         let form1 = document.querySelector('.form1');
         let form2 = document.querySelector('.form2');
         //console.log(form2)
-        form1.style.left = `${form1.offsetLeft + 200}px`;
-        form2.style.left = `${form2.offsetLeft - 200}px`;
-        form2.style.height = `${form1.clientHeight} px`;
+        form1.style.left = '50%';
+        form2.style.left = '150%';
         setExpanded(false);
     }
 
@@ -131,7 +138,7 @@ const Home = () => {
 
     const PlayerTile = (props) => {
         return (
-            <h3>{props.data}</h3>
+            <h3 className='player-tile'>{`- ${props.data}`}</h3>
         );
     }
 
@@ -151,7 +158,7 @@ const Home = () => {
                 <h1 className='title-letter'>B</h1>
                 <h1 className='title-letter'>L</h1>
             </div>
-            {(creating) ? <CircularLoading /> : <Fragment />}
+            {(creating || joining) ? <CircularLoading /> : <Fragment />}
             <div className='formbox'>
                 <div className='form1'>
                     <img src='/doodles/3.png' className='doodle1'></img>
@@ -175,13 +182,13 @@ const Home = () => {
                     <div className='section'>
                         <h2 className='form-header'>Room Code</h2>
                         <div className='room-form'>
-                            <input type='text' placeholder='Username' className='code-field' readOnly value={genCode}></input>
+                            <input type='text' placeholder='Username' className='code-field' readOnly value={roomcode}></input>
                             <button className='code-copy' onClick={copyCode}>Copy</button>
                         </div>
                         <h6 style={{ margin: '0px 0px 0px 20px', fontSize: '13px', fontFamily: 'monospace' }}>(Send this code to your friends)</h6>
                     </div>
                     <div className='lobby'>
-                        <h2 className='form-header'>Players:</h2>
+                        <h2 className='lobby-header'>Players:</h2>
                         <div className='player-container'>
                             {
                                 players.map((name, index) =>
@@ -190,11 +197,19 @@ const Home = () => {
                             }
                         </div>
                     </div>
-                    <Link to='/blabla' style={{ color: 'white', textDecoration: 'none' }}>
-                        <button className='start-button'>
-                            Start
-                        </button>
-                    </Link>
+                    {
+                        (roomStat.owner != username) ?
+                            <Fragment />
+                            :
+                            <Link to='/blabla' style={{ color: 'white', textDecoration: 'none' }}>
+                                <button className='start-button'>
+                                    Start
+                                </button>
+                            </Link>
+                    }
+                    <button className='create-button' onClick={collapseForm}>
+                        <h4 style={{ margin: '0px', color: "white" }}>Back</h4>
+                    </button>
                 </div>
             </div>
         </div>

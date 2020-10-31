@@ -41,9 +41,10 @@ io.on('connection', (socket) => {
         //let room = io.sockets.adapter.rooms[code];
         //let sockets = room['sockets']
         if (!(code in rooms)) {
-            rooms[code] = [user];
+            rooms[code] = { owner: user, code: code, members: [user] };
         } else {
-            rooms[code].push(user);
+
+            rooms[code]['members'].push(user);
         }
         io.emit('join', rooms[code])
         //console.log(room, socket.username);

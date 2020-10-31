@@ -205,7 +205,6 @@ body{
     margin: 5px 20px;
     width: 90%;
     height: 110px;
-    background-color: white;
 }
 
 .loading{
@@ -214,6 +213,25 @@ body{
     position: absolute;
     left: 48%;
     top: 50%;
+}
+
+.start-button{
+    margin-top:2px;
+    width: 100%;
+    padding: 10px;
+    border: none;
+    color: white;
+    background-color: rgb(252, 158, 44);
+    cursor: pointer;
+    outline: none;
+}
+.start-button:hover{
+    color: white;
+    background-color:rgb(252, 147, 18);
+}
+.start-button:active{
+    color: white;
+    background-color: rgb(255, 140, 0);
 }
 
 @keyframes letters {

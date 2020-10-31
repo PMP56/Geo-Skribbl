@@ -1,9 +1,9 @@
 import { CircularProgress } from '@material-ui/core';
 import React, { Fragment, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-
-
 import './style/home.css';
+
+const socket = io();
 
 const Home = () => {
     const [username, setUsername] = useState('');
@@ -11,8 +11,19 @@ const Home = () => {
     const [creating, setCreating] = useState(false);
     const [expanded, setExpanded] = useState(false);
     const [genCode, setGenCode] = useState('');
+    //const [roomStat, setRoomStat] = useState({});
+    const [players, setPlayers] = useState([]);
 
     useEffect(() => {
+        socket.on('join', (room) => {
+            console.log(room);
+            setPlayers(room);
+            // Object.entries(room).forEach((player, index) => {
+            //     console.log(player)
+            // })
+
+        });
+
         let prevname = localStorage.getItem('username');
         if (prevname != null) {
             setUsername(prevname);
@@ -46,6 +57,10 @@ const Home = () => {
         setRoomcode(e.target.value)
     }
 
+    const joinRoom = () => {
+        socket.emit('join', { code: roomcode, user: username });
+    }
+
     const createRoom = () => {
         if (username.length == 0) {
             window.alert('Enter an username')
@@ -60,8 +75,8 @@ const Home = () => {
             setCreating(true);
             setTimeout(() => {
                 setCreating(false)
-                generateCode();
                 expandForm();
+                generateCode();
             }, 1000);
         } else {
             collapseForm();
@@ -76,6 +91,7 @@ const Home = () => {
             gen_code += characters.charAt(Math.floor(Math.random() * charactersLength));
         }
         setGenCode(gen_code);
+        socket.emit('join', { code: gen_code, user: username });
     }
 
     const copyCode = () => {
@@ -83,12 +99,13 @@ const Home = () => {
         copyText.select();
         copyText.setSelectionRange(0, 99999);
         document.execCommand("copy");
+        console.log(players)
     }
 
     const expandForm = () => {
         let form1 = document.querySelector('.form1');
         let form2 = document.querySelector('.form2');
-        console.log(form2)
+
         form1.style.left = `${form1.offsetLeft - 200}px`;
         form2.style.left = `${form2.offsetLeft + 200}px`;
         form2.style.height = `${form1.clientHeight} px`;
@@ -98,7 +115,7 @@ const Home = () => {
     const collapseForm = () => {
         let form1 = document.querySelector('.form1');
         let form2 = document.querySelector('.form2');
-        console.log(form2)
+        //console.log(form2)
         form1.style.left = `${form1.offsetLeft + 200}px`;
         form2.style.left = `${form2.offsetLeft - 200}px`;
         form2.style.height = `${form1.clientHeight} px`;
@@ -110,6 +127,12 @@ const Home = () => {
         return (
             <CircularProgress style={{ color: 'darkred' }} className='loading' />
         )
+    }
+
+    const PlayerTile = (props) => {
+        return (
+            <h3>{props.data}</h3>
+        );
     }
 
     return (
@@ -140,9 +163,9 @@ const Home = () => {
                     <div className='section'>
                         <h2 className='form-header'>Room Code</h2>
                         <input type='text' placeholder='Room Code' className='name-field' onChange={codeChange}></input>
-                        <h6 style={{ margin: '0px 0px 0px 20px', fontSize: '14px', fontFamily: 'monospace' }}>(Enter the room code to join)</h6>
+                        <h6 style={{ margin: '0px 0px 0px 20px', fontSize: '14px', fontFamily: 'monospace' }}>(Enter the room code to join a room)</h6>
                     </div>
-                    <button className='join-button' disabled={(roomcode.length == 0)}>Join a room</button>
+                    <button className='join-button' disabled={(roomcode.length == 0)} onClick={joinRoom}>Join a room</button>
                     <button className='create-button' onClick={createRoom}>
                         <h4 style={{ margin: '0px', color: (!expanded) ? "white" : "red" }}>{!expanded ? 'Create a Room' : 'Delete this room'}</h4>
                     </button>
@@ -160,17 +183,18 @@ const Home = () => {
                     <div className='lobby'>
                         <h2 className='form-header'>Players:</h2>
                         <div className='player-container'>
-
+                            {
+                                players.map((name, index) =>
+                                    <PlayerTile data={name} key={index} />
+                                )
+                            }
                         </div>
                     </div>
-                    <button className='create-button' onClick={createRoom}>
-                        {
-                            (username.length == 0) ?
-                                <h4 style={{ margin: '0px' }}>Start</h4>
-                                :
-                                <Link to='/blabla' style={{ color: 'white', textDecoration: 'none' }}>Create a Room</Link>
-                        }
-                    </button>
+                    <Link to='/blabla' style={{ color: 'white', textDecoration: 'none' }}>
+                        <button className='start-button'>
+                            Start
+                        </button>
+                    </Link>
                 </div>
             </div>
         </div>

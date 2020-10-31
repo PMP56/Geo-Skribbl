@@ -7,6 +7,8 @@ const app = express();
 const server = http.createServer(app);
 const io = socket(server);
 
+var rooms = {};
+
 io.on('connection', (socket) => {
     //console.log('A user connected');
     socket.emit('message', 'Welcome to Geo Skribbl');
@@ -33,6 +35,19 @@ io.on('connection', (socket) => {
     socket.on('mouseUp', () => {
         io.emit('mouseUp');
     });
+
+    socket.on('join', ({ code, user }) => {
+        socket.join(code);
+        //let room = io.sockets.adapter.rooms[code];
+        //let sockets = room['sockets']
+        if (!(code in rooms)) {
+            rooms[code] = [user];
+        } else {
+            rooms[code].push(user);
+        }
+        io.emit('join', rooms[code])
+        //console.log(room, socket.username);
+    })
 })
 
 app.use(express.static(path.join(__dirname, '../public')));

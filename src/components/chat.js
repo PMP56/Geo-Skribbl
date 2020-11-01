@@ -9,9 +9,10 @@ const Chat = (props) => {
     const [roomCode, setRoomCode] = useState(props.data.code);
     const [roomStat, setRoomStat] = useState(props.data);
     const [chats, setChats] = useState([]);
-    const username = localStorage.getItem('username');
+    const username = props.user;
 
     useEffect(() => {
+        socket.emit('canvasJoin', roomCode);
         socket.on('message', message => {
             const date = new Date();
             const hour = date.getHours();
@@ -62,7 +63,7 @@ const Chat = (props) => {
             return
         }
         if (msg.length != 0) {
-            socket.emit('chat', msg);
+            socket.emit('chat', { user: username, code: roomCode, msg: msg });
             setMsg('');
         }
         document.querySelector('.chat-input').focus();

@@ -7,8 +7,8 @@ import './style/game.css';
 const Game = (props) => {
     return (
         <div className='app-body'>
-            <Canvas data={props.location.state} />
-            <Chat data={props.location.state} />
+            <Canvas user={props.user} data={props.data} />
+            <Chat user={props.user} data={props.data} />
         </div>
     );
 }

@@ -3,6 +3,8 @@ import React, { Fragment, useEffect, useState } from 'react';
 import { Link, Redirect, useHistory } from 'react-router-dom';
 import './style/home.css';
 
+import Game from './game';
+
 const socket = io();
 
 const Home = () => {
@@ -19,7 +21,7 @@ const Home = () => {
 
     useEffect(() => {
         socket.on('join', (room) => {
-            console.log(room);
+            //console.log(room);
             setRoomStat(room);
             setPlayers(room.members);
             setRoomcode(room.code);
@@ -154,10 +156,7 @@ const Home = () => {
     return (
         <Fragment>
             {
-                (started) ? <Redirect to={{
-                    pathname: `/${roomcode}`,
-                    state: roomStat
-                }} />
+                (started) ? <Game user={username} data={roomStat} />
                     :
                     <div className='home'>
                         <div className='overlay'></div>

@@ -20,7 +20,7 @@ io.on('connection', (socket) => {
     });
 
     socket.on('chat', (data) => {
-        io.emit('chat', data);
+        io.in(data.code).emit('chat', data);
     });
 
     socket.on('clear', () => {
@@ -28,22 +28,26 @@ io.on('connection', (socket) => {
     });
 
     socket.on('mouseDown', ({ code, data }) => {
+        // var room = io.sockets.adapter.rooms[code];
+        // console.log(room);
         //const code = data.code;
+        // socket.join(code);
         //console.log(code);
         //console.log(io.sockets.in(data.code));
         io.in(code).emit('mouseDown', data);
     });
     socket.on('mouseMove', ({ code, data }) => {
+        //socket.join(code);
         io.in(code).emit('mouseMove', data);
     });
     socket.on('mouseUp', (code) => {
+        //socket.join(code);
         io.in(code).emit('mouseUp');
     });
 
     socket.on('join', ({ code, user }) => {
         socket.join(code);
 
-        //let sockets = room['sockets']
         if (!(code in rooms)) {
             rooms[code] = { owner: user, code: code, members: [user] };
         } else {
@@ -52,14 +56,13 @@ io.on('connection', (socket) => {
         io.in(code).emit('join', rooms[code])
     })
 
-    socket.on('start', (code) => {
-        io.in(code).emit('start');
-
+    socket.on('canvasJoin', (code) => {
+        socket.join(code);
     })
 
-    socket.on('get', (code) => {
-        let room = io.sockets.adapter.rooms[code];
-        console.log(room);
+    socket.on('start', (code) => {
+        //socket.join(code);
+        io.in(code).emit('start');
     })
 })
 

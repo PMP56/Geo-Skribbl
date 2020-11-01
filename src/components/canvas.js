@@ -30,12 +30,13 @@ const Canvas = (props) => {
 
     }, [context]);
 
-    useEffect(() => {
 
-        socket.emit('get', roomCode);
+    //socket.emit('get', roomCode);
+    useEffect(() => {
+        socket.emit('canvasJoin', roomCode);
 
         socket.on('mouseDown', (data) => {
-            console.log(data);
+            //console.log(data);
             const x = data.offsetx;
             const y = data.offsety;
             context.current.beginPath();
@@ -43,13 +44,13 @@ const Canvas = (props) => {
         })
 
         socket.on('mouseUp', (message) => {
-            console.log('UP');
+            //console.log('UP');
             context.current.closePath();
             //console.log(isDrawing);
         })
 
         socket.on('mouseMove', (data) => {
-            console.log('move')
+            //console.log('move')
             const x = data.offsetx;
             const y = data.offsety;
             context.current.strokeStyle = data.color;
@@ -61,8 +62,7 @@ const Canvas = (props) => {
         socket.on('clear', () => {
             context.current.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
         })
-    }, [isDrawing, setIsDrawing]);
-
+    }, [0])
 
     const mouseDown = ({ nativeEvent }) => {
         const x = nativeEvent.offsetX;

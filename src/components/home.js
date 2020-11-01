@@ -1,6 +1,6 @@
 import { CircularProgress } from '@material-ui/core';
 import React, { Fragment, useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, Redirect, useHistory } from 'react-router-dom';
 import './style/home.css';
 
 const socket = io();
@@ -15,6 +15,8 @@ const Home = () => {
     const [roomStat, setRoomStat] = useState({});
     const [players, setPlayers] = useState([]);
 
+    const [started, setStarted] = useState(false);
+
     useEffect(() => {
         socket.on('join', (room) => {
             console.log(room);
@@ -24,8 +26,11 @@ const Home = () => {
             // Object.entries(room).forEach((player, index) => {
             //     console.log(player)
             // })
-
         });
+        socket.on('start', () => {
+            //console.log('start')
+            setStarted(true);
+        })
 
         let prevname = localStorage.getItem('username');
         if (prevname != null) {
@@ -35,7 +40,7 @@ const Home = () => {
         Array.from(letters).forEach((letter) => {
             let time = Math.random() * (4 - 2) + 2;
 
-            let random = Math.floor(Math.random() * (Math.floor(60) - Math.ceil(-90)) + Math.ceil(-90));
+            let random = Math.floor(Math.random() * (Math.floor(120) - Math.ceil(-90)) + Math.ceil(-90));
             let rotation1 = `${random}deg`
             let rotation2 = `${random + random / 2}deg`
             let rotation3 = `${random - random / 2}deg`
@@ -129,6 +134,10 @@ const Home = () => {
         setExpanded(false);
     }
 
+    const startGame = () => {
+        socket.emit('start', roomcode);
+    }
+
 
     const CircularLoading = () => {
         return (
@@ -143,76 +152,83 @@ const Home = () => {
     }
 
     return (
-        <div className='home'>
-            <div className='overlay'></div>
-            <div className='title'>
-                <h1 className='title-letter'>G</h1>
-                <h1 className='title-letter'>E</h1>
-                <h1 className='title-letter'>O</h1>
-                <h1 className='title-letter'>-</h1>
-                <h1 className='title-letter'>S</h1>
-                <h1 className='title-letter'>K</h1>
-                <h1 className='title-letter'>R</h1>
-                <h1 className='title-letter'>I</h1>
-                <h1 className='title-letter'>B</h1>
-                <h1 className='title-letter'>B</h1>
-                <h1 className='title-letter'>L</h1>
-            </div>
-            {(creating || joining) ? <CircularLoading /> : <Fragment />}
-            <div className='formbox'>
-                <div className='form1'>
-                    <img src='/doodles/3.png' className='doodle1'></img>
-                    <img src='/doodles/4.png' className='doodle2'></img>
-                    <div className='section'>
-                        <h2 className='form-header'>Username</h2>
-                        <input type='text' placeholder='Username' className='name-field' onChange={nameChange} value={username}></input>
-                    </div>
-                    <div className='section'>
-                        <h2 className='form-header'>Room Code</h2>
-                        <input type='text' placeholder='Room Code' className='name-field' onChange={codeChange}></input>
-                        <h6 style={{ margin: '0px 0px 0px 20px', fontSize: '14px', fontFamily: 'monospace' }}>(Enter the room code to join a room)</h6>
-                    </div>
-                    <button className='join-button' disabled={(roomcode.length == 0)} onClick={joinRoom}>Join a room</button>
-                    <button className='create-button' onClick={createRoom}>
-                        <h4 style={{ margin: '0px', color: (!expanded) ? "white" : "red" }}>{!expanded ? 'Create a Room' : 'Delete this room'}</h4>
-                    </button>
-                </div>
-                <div className='form2'>
-
-                    <div className='section'>
-                        <h2 className='form-header'>Room Code</h2>
-                        <div className='room-form'>
-                            <input type='text' placeholder='Username' className='code-field' readOnly value={roomcode}></input>
-                            <button className='code-copy' onClick={copyCode}>Copy</button>
+        <Fragment>
+            {
+                (started) ? <Redirect to={{
+                    pathname: `/${roomcode}`,
+                    state: roomStat
+                }} />
+                    :
+                    <div className='home'>
+                        <div className='overlay'></div>
+                        <div className='title'>
+                            <h1 className='title-letter'>G</h1>
+                            <h1 className='title-letter'>E</h1>
+                            <h1 className='title-letter'>O</h1>
+                            <h1 className='title-letter'>-</h1>
+                            <h1 className='title-letter'>S</h1>
+                            <h1 className='title-letter'>K</h1>
+                            <h1 className='title-letter'>R</h1>
+                            <h1 className='title-letter'>I</h1>
+                            <h1 className='title-letter'>B</h1>
+                            <h1 className='title-letter'>B</h1>
+                            <h1 className='title-letter'>L</h1>
                         </div>
-                        <h6 style={{ margin: '0px 0px 0px 20px', fontSize: '13px', fontFamily: 'monospace' }}>(Send this code to your friends)</h6>
-                    </div>
-                    <div className='lobby'>
-                        <h2 className='lobby-header'>Players:</h2>
-                        <div className='player-container'>
-                            {
-                                players.map((name, index) =>
-                                    <PlayerTile data={name} key={index} />
-                                )
-                            }
-                        </div>
-                    </div>
-                    {
-                        (roomStat.owner != username) ?
-                            <Fragment />
-                            :
-                            <Link to='/blabla' style={{ color: 'white', textDecoration: 'none' }}>
-                                <button className='start-button'>
-                                    Start
+                        {(creating || joining) ? <CircularLoading /> : <Fragment />}
+                        <div className='formbox'>
+                            <div className='form1'>
+                                <img src='/doodles/3.png' className='doodle1'></img>
+                                <img src='/doodles/4.png' className='doodle2'></img>
+                                <div className='section'>
+                                    <h2 className='form-header'>Username</h2>
+                                    <input type='text' placeholder='Username' className='name-field' onChange={nameChange} value={username}></input>
+                                </div>
+                                <div className='section'>
+                                    <h2 className='form-header'>Room Code</h2>
+                                    <input type='text' placeholder='Room Code' className='name-field' onChange={codeChange}></input>
+                                    <h6 style={{ margin: '0px 0px 0px 20px', fontSize: '14px', fontFamily: 'monospace' }}>(Enter the room code to join a room)</h6>
+                                </div>
+                                <button className='join-button' disabled={(roomcode.length == 0)} onClick={joinRoom}>Join a room</button>
+                                <button className='create-button' onClick={createRoom}>
+                                    <h4 style={{ margin: '0px', color: (!expanded) ? "white" : "red" }}>{!expanded ? 'Create a Room' : 'Delete this room'}</h4>
                                 </button>
-                            </Link>
-                    }
-                    <button className='create-button' onClick={collapseForm}>
-                        <h4 style={{ margin: '0px', color: "white" }}>Back</h4>
-                    </button>
-                </div>
-            </div>
-        </div>
+                            </div>
+                            <div className='form2'>
+
+                                <div className='section'>
+                                    <h2 className='form-header'>Room Code</h2>
+                                    <div className='room-form'>
+                                        <input type='text' placeholder='Username' className='code-field' readOnly value={roomcode}></input>
+                                        <button className='code-copy' onClick={copyCode}>Copy</button>
+                                    </div>
+                                    <h6 style={{ margin: '0px 0px 0px 20px', fontSize: '13px', fontFamily: 'monospace' }}>(Send this code to your friends)</h6>
+                                </div>
+                                <div className='lobby'>
+                                    <h2 className='lobby-header'>Players:</h2>
+                                    <div className='player-container'>
+                                        {
+                                            players.map((name, index) =>
+                                                <PlayerTile data={name} key={index} />
+                                            )
+                                        }
+                                    </div>
+                                </div>
+                                {
+                                    (roomStat.owner != username) ?
+                                        <Fragment />
+                                        :
+                                        <button className='start-button' onClick={startGame}>
+                                            Start
+                            </button>
+                                }
+                                <button className='create-button' onClick={collapseForm}>
+                                    <h4 style={{ margin: '0px', color: "white" }}>Back</h4>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+            }
+        </Fragment>
     );
 }
 

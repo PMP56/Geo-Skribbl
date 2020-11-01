@@ -6,14 +6,17 @@ import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
 import "./style/canvas.css";
 const socket = io();
 
-const Canvas = () => {
+const Canvas = (props) => {
     const canvasRef = useRef(null)
     const context = useRef(null)
+    const [roomCode, setRoomCode] = useState(props.data.code);
+    const [roomStat, setRoomStat] = useState(props.data);
     const [isDrawing, setIsDrawing] = useState(false);
     const [brushColor, setBrushColor] = useState("black");
     const [brushWidth, setBrushWidth] = useState(5);
 
     useEffect(() => {
+        console.log(roomCode);
         const canvas = canvasRef.current;
         canvas.width = canvas.parentElement.clientWidth;
         canvas.height = 7 * window.innerHeight / 10;
@@ -28,7 +31,11 @@ const Canvas = () => {
     }, [context]);
 
     useEffect(() => {
+
+        socket.emit('get', roomCode);
+
         socket.on('mouseDown', (data) => {
+            console.log(data);
             const x = data.offsetx;
             const y = data.offsety;
             context.current.beginPath();
@@ -36,12 +43,13 @@ const Canvas = () => {
         })
 
         socket.on('mouseUp', (message) => {
+            console.log('UP');
             context.current.closePath();
             //console.log(isDrawing);
         })
 
         socket.on('mouseMove', (data) => {
-
+            console.log('move')
             const x = data.offsetx;
             const y = data.offsety;
             context.current.strokeStyle = data.color;
@@ -60,21 +68,22 @@ const Canvas = () => {
         const x = nativeEvent.offsetX;
         const y = nativeEvent.offsetY;
         setIsDrawing(true);
-        socket.emit('mouseDown', { offsetx: x, offsety: y, color: brushColor, width: brushWidth })
+        socket.emit('mouseDown', { code: roomCode, data: { offsetx: x, offsety: y, color: brushColor, width: brushWidth } })
     }
 
     const mouseMove = ({ nativeEvent }) => {
         const x = nativeEvent.offsetX;
         const y = nativeEvent.offsetY;
         if (isDrawing) {
-            socket.emit('mouseMove', { offsetx: x, offsety: y, color: brushColor, width: brushWidth })
+            socket.emit('mouseMove', { code: roomCode, data: { offsetx: x, offsety: y, color: brushColor, width: brushWidth } })
         }
     }
 
     const mouseUp = (e) => {
         e.preventDefault();
         setIsDrawing(false);
-        socket.emit('mouseUp', 'Up');
+        socket.emit('mouseUp', roomCode);
+        //console.log('up')
     }
 
     const clearCanvas = () => {

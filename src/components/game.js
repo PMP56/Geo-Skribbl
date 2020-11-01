@@ -4,11 +4,11 @@ import Chat from './chat';
 
 import './style/game.css';
 
-const Game = () => {
+const Game = (props) => {
     return (
         <div className='app-body'>
-            <Canvas />
-            <Chat />
+            <Canvas data={props.location.state} />
+            <Chat data={props.location.state} />
         </div>
     );
 }

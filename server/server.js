@@ -16,38 +16,50 @@ io.on('connection', (socket) => {
 
     socket.on('disconnect', () => {
         io.emit('message', 'A user has left the chat');
+        //console.log('Disconnect');
     });
 
-    socket.on('chat', (chat) => {
-        io.emit('chat', chat);
+    socket.on('chat', (data) => {
+        io.emit('chat', data);
     });
 
     socket.on('clear', () => {
         io.emit('clear');
     });
 
-    socket.on('mouseDown', (data) => {
-        io.emit('mouseDown', data);
+    socket.on('mouseDown', ({ code, data }) => {
+        //const code = data.code;
+        //console.log(code);
+        //console.log(io.sockets.in(data.code));
+        io.in(code).emit('mouseDown', data);
     });
-    socket.on('mouseMove', (data) => {
-        io.emit('mouseMove', data);
+    socket.on('mouseMove', ({ code, data }) => {
+        io.in(code).emit('mouseMove', data);
     });
-    socket.on('mouseUp', () => {
-        io.emit('mouseUp');
+    socket.on('mouseUp', (code) => {
+        io.in(code).emit('mouseUp');
     });
 
     socket.on('join', ({ code, user }) => {
         socket.join(code);
-        //let room = io.sockets.adapter.rooms[code];
+
         //let sockets = room['sockets']
         if (!(code in rooms)) {
             rooms[code] = { owner: user, code: code, members: [user] };
         } else {
-
             rooms[code]['members'].push(user);
         }
-        io.emit('join', rooms[code])
-        //console.log(room, socket.username);
+        io.in(code).emit('join', rooms[code])
+    })
+
+    socket.on('start', (code) => {
+        io.in(code).emit('start');
+
+    })
+
+    socket.on('get', (code) => {
+        let room = io.sockets.adapter.rooms[code];
+        console.log(room);
     })
 })
 

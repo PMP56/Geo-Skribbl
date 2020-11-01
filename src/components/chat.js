@@ -5,8 +5,11 @@ import './style/chat.css'
 const socket = io();
 
 
-const Chat = () => {
+const Chat = (props) => {
+    const [roomCode, setRoomCode] = useState(props.data.code);
+    const [roomStat, setRoomStat] = useState(props.data);
     const [chats, setChats] = useState([]);
+    const username = localStorage.getItem('username');
 
     useEffect(() => {
         socket.on('message', message => {
@@ -22,7 +25,7 @@ const Chat = () => {
             const chats = document.querySelector('.chats');
             chats.scrollTop = chats.scrollHeight;
         })
-        socket.on('chat', chat => {
+        socket.on('chat', (data) => {
             const date = new Date();
             const hour = date.getHours();
             const minute = "0" + date.getMinutes();
@@ -30,7 +33,7 @@ const Chat = () => {
             let formatTime = `${hour} : ${minute.substr(-2)}`;
             setChats(prevVal => ([
                 ...prevVal,
-                { username: 'LORD', message: chat, time: formatTime }
+                { username: data.user, message: data.msg, time: formatTime }
             ]));
             const chats = document.querySelector('.chats');
             chats.scrollTop = chats.scrollHeight;
@@ -48,7 +51,7 @@ const Chat = () => {
 
     const submit = (e) => {
         if (msg.length != 0) {
-            socket.emit('chat', msg);
+            socket.emit('chat', { user: username, code: roomCode, msg: msg });
             setMsg('');
         }
         document.querySelector('.chat-input').focus();

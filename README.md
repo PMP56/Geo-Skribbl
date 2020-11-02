@@ -13,13 +13,16 @@ Uses Socket.IO for real-time duplex communication.
 
 Also, React is configured from scratch to run along with Express on the same port (5050). 
 
+Creating and joining a room:
+![alt text](https://github.com/PMP56/Geo-Skribbl/blob/master/joining-room.gif)
 
-Two different windows at a same time:
+Four different windows at a same time (Drawing):
 ![alt text](https://github.com/PMP56/Geo-Skribbl/blob/master/geo-skrribl.gif)
 
 ### Similar to skribbl.io but for geographical terms.
 
 Clone the repo and run the following command to get started:
 ```js
-npm run express
+npm run express //for production
+npm run wexpress //for development
 ```

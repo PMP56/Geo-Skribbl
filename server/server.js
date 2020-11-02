@@ -60,6 +60,14 @@ io.on('connection', (socket) => {
         //socket.join(code);
         io.in(code).emit('start');
     })
+
+    socket.on('turnChange', ({ turn, code, last }) => {
+        if (!last) {
+            io.in(code).emit('turnChange', turn + 1)
+        } else {
+            io.in(code).emit('turnChange', 0)
+        }
+    })
 })
 
 app.use(express.static(path.join(__dirname, '../public')));

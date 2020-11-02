@@ -16,6 +16,7 @@ const Home = () => {
     const [genCode, setGenCode] = useState('');
     const [roomStat, setRoomStat] = useState({});
     const [players, setPlayers] = useState([]);
+    const [error, setError] = useState('');
 
     const [started, setStarted] = useState(false);
 
@@ -33,6 +34,10 @@ const Home = () => {
             //console.log('start')
             setStarted(true);
         })
+        socket.on('error', (error) => {
+            setError(error);
+            console.log(error);
+        })
 
         let prevname = localStorage.getItem('username');
         if (prevname != null) {
@@ -41,6 +46,8 @@ const Home = () => {
         let letters = document.getElementsByClassName('title-letter');
         Array.from(letters).forEach((letter) => {
             let time = Math.random() * (4 - 2) + 2;
+            let colors = ['red', 'blue', 'pink', 'purple', 'orange', 'cyan', 'limegreen', 'yellow', 'brown', 'darkred', 'tomato']
+            let colorIndex = Math.floor(Math.random() * colors.length)
 
             let random = Math.floor(Math.random() * (Math.floor(120) - Math.ceil(-90)) + Math.ceil(-90));
             let rotation1 = `${random}deg`
@@ -48,8 +55,6 @@ const Home = () => {
             let rotation3 = `${random - random / 2}deg`
             let rotation4 = `${random}deg`
 
-            let colors = ['red', 'blue', 'pink', 'purple', 'orange', 'cyan', 'limegreen', 'yellow', 'brown', 'darkred', 'tomato']
-            let colorIndex = Math.floor(Math.random() * colors.length)
 
             letter.style.setProperty('--time', `${time}s`)
             letter.style.setProperty('--rotation1', rotation1)
@@ -68,10 +73,12 @@ const Home = () => {
     }
 
     const joinRoom = () => {
-        socket.emit('join', { code: roomcode, user: username });
+        socket.emit('join', { code: roomcode, user: username, mode: 'exist' });
         setJoining(true);
         setTimeout(() => {
-            expandForm();
+            if (error == '') {
+                expandForm();
+            }
             setJoining(false);
         }, 1000);
     }
@@ -106,7 +113,7 @@ const Home = () => {
             gen_code += characters.charAt(Math.floor(Math.random() * charactersLength));
         }
         setGenCode(gen_code);
-        socket.emit('join', { code: gen_code, user: username });
+        socket.emit('join', { code: gen_code, user: username, mode: 'create' });
     }
 
     const copyCode = () => {

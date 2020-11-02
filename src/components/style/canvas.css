@@ -78,3 +78,13 @@
     width: 100%;
     border: 2px solid black;
 }
+
+.timer{
+    z-index: 100;
+    position: absolute;
+    top: -20px;
+    font-size: 25px;
+    font-family: monospace;
+    color: black;
+    margin-left: 10px;
+}

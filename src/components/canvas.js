@@ -15,8 +15,16 @@ const Canvas = (props) => {
     const [brushColor, setBrushColor] = useState("black");
     const [brushWidth, setBrushWidth] = useState(5);
 
+    const [timer, setTimer] = useState(10);
+
+    const [offsetBucket, setOffsetBucket] = useState([]);
+
+    const username = props.user;
+    const [players, setPlayers] = useState(props.data.members);
+    const [turnIndex, setTurnIndex] = useState(0);
+
     useEffect(() => {
-        console.log(roomCode);
+        console.log(roomStat);
         const canvas = canvasRef.current;
         canvas.width = canvas.parentElement.clientWidth;
         canvas.height = 7 * window.innerHeight / 10;
@@ -33,6 +41,7 @@ const Canvas = (props) => {
 
     //socket.emit('get', roomCode);
     useEffect(() => {
+
         socket.emit('canvasJoin', roomCode);
 
         socket.on('mouseDown', (data) => {
@@ -40,7 +49,7 @@ const Canvas = (props) => {
             const x = data.offsetx;
             const y = data.offsety;
             context.current.beginPath();
-            // context.current.moveTo(x - 70, y - 5);
+            context.current.moveTo(x, y);
         })
 
         socket.on('mouseUp', (message) => {
@@ -64,30 +73,66 @@ const Canvas = (props) => {
         })
     }, [0])
 
+    useEffect(() => {
+        setTimeout(() => {
+            if (timer > 0) {
+                setTimer(timer - 1);
+            } else {
+                if (turnIndex < players.length - 1) {
+                    setTurnIndex(turnIndex + 1)
+                    socket.emit('clear', roomCode);
+                } else {
+                    setTurnIndex(0)
+                    socket.emit('clear', roomCode);
+                }
+                setTimer(10);
+            }
+        }, 1000);
+    }, [timer])
+
+
     const mouseDown = ({ nativeEvent }) => {
         const x = nativeEvent.offsetX;
         const y = nativeEvent.offsetY;
         setIsDrawing(true);
-        socket.emit('mouseDown', { code: roomCode, data: { offsetx: x, offsety: y, color: brushColor, width: brushWidth } })
+        if (username == players[turnIndex]) {
+            context.current.beginPath();
+            context.current.moveTo(x, y);
+            socket.emit('mouseDown', { code: roomCode, data: { offsetx: x, offsety: y, color: brushColor, width: brushWidth } })
+        }
     }
 
     const mouseMove = ({ nativeEvent }) => {
         const x = nativeEvent.offsetX;
         const y = nativeEvent.offsetY;
         if (isDrawing) {
-            socket.emit('mouseMove', { code: roomCode, data: { offsetx: x, offsety: y, color: brushColor, width: brushWidth } })
+            if (username == players[turnIndex]) {
+                context.current.strokeStyle = brushColor;
+                context.current.lineWidth = brushWidth;
+                context.current.lineTo(x, y);
+                context.current.stroke();
+                socket.emit('mouseMove', { code: roomCode, data: { offsetx: x, offsety: y, color: brushColor, width: brushWidth } })
+            }
         }
     }
 
     const mouseUp = (e) => {
         e.preventDefault();
+        if (username == players[turnIndex]) {
+            context.current.closePath();
+            socket.emit('mouseUp', roomCode);
+        }
         setIsDrawing(false);
-        socket.emit('mouseUp', roomCode);
         //console.log('up')
     }
 
     const clearCanvas = () => {
-        socket.emit('clear');
+        startTimer();
+        socket.emit('clear', roomCode);
+    }
+
+    const startTimer = () => {
+
     }
 
     return (
@@ -129,6 +174,7 @@ const Canvas = (props) => {
             </div>
             <div className='canvas-container'>
                 <canvas id="canvas" ref={canvasRef} onMouseDown={mouseDown} onMouseMove={mouseMove} onMouseUp={mouseUp}></canvas>
+                <h3 className='timer'>{timer}</h3>
             </div>
         </div>
     );

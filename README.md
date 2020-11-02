@@ -5,10 +5,11 @@ An approach to REXKET (React-Express-Socket.IO)
 http://geo-skribbl.herokuapp.com
 
 Uses Socket.IO for real-time duplex communication.
-Features:
-    * Realtime chat
-    * Realtime canvas drawing
-    * Private rooms and codes
+
+### Features:
+* Realtime chat
+* Realtime canvas drawing
+* Private rooms and codes
 
 Also, React is configured from scratch to run along with Express on the same port (5050). 
 

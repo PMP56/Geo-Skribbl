@@ -3,7 +3,7 @@ import React, { Component, useState, useEffect, useRef, Fragment } from 'react';
 import HighlightOffIcon from '@material-ui/icons/HighlightOff';
 import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
 
-import words from './words/words.json';
+import words from '../../public/words.json';
 import "./style/canvas.css";
 const socket = io();
 
@@ -18,7 +18,8 @@ const Canvas = (props) => {
 
     const [timer, setTimer] = useState(10);
 
-    const [offsetBucket, setOffsetBucket] = useState([]);
+    const [words, setWords] = useState(props.words);
+    const [randomWords, setRandomWords] = useState([]);
 
     const username = props.user;
     const [players, setPlayers] = useState(props.data.members);
@@ -39,18 +40,18 @@ const Canvas = (props) => {
         contextRef.lineWidth = brushWidth;
         context.current = contextRef;
 
-        // var request = new XMLHttpRequest();
-        // request.open('GET', './words/words.json', false);
-        // request.send(null);
-        // const ourwords = JSON.parse(request.responseText);
-        // console.log(ourwords)
-
     }, [context]);
 
 
     //socket.emit('get', roomCode);
     useEffect(() => {
+        generateRandomWords();
         checkTurn();
+        // fetch('/words').then(async (res) => {
+        //     const json = await res.json();
+        //     setWords(json.words.split(', '));
+        //     setLoaded(true);
+        // })
         socket.emit('canvasJoin', roomCode);
 
         socket.on('mouseDown', (data) => {
@@ -86,8 +87,10 @@ const Canvas = (props) => {
             setTurnIndex(turn);
             setIsChoosing(username == players[turn])
             setIsChoosen(false);
+            generateRandomWords();
             //checkTurn();
         })
+
     }, [0])
 
     useEffect(() => {
@@ -149,25 +152,26 @@ const Canvas = (props) => {
                     socket.emit('turnChange', { turn: turnIndex, code: roomCode, last: (turnIndex == players.length - 1) });
                 }
                 socket.emit('clear', roomCode);
-                // if (turnIndex < players.length - 1) {
-                //     // setTurnIndex(turnIndex + 1)
-                //     // checkTurn();
-                //     //setIsChoosing(username == players[turnIndex])
-                // } else {
-                //     // setTurnIndex(0);
-                //     // checkTurn();
-                //     //setIsChoosing(username == players[turnIndex])
-                //     socket.emit('turnChange', turnIndex);
-                //     socket.emit('clear', roomCode);
                 setTimer(10);
             }
         }, 1000);
     }
 
-    const wordChoosen = () => {
+    const wordChoosen = (word) => {
         setIsChoosen(true)
-        console.log('isChoosing', isChoosing);
-        console.log('isChoosen', isChoosen);
+        socket.emit('wordChoosen', { word: word, code: roomCode });
+        //console.log(generateRandomWords());
+        // console.log('isChoosing', isChoosing);
+        // console.log('isChoosen', isChoosen);
+    }
+
+    const generateRandomWords = () => {
+        const len = words.length;
+        let randIndex1 = Math.floor(Math.random() * len);
+        let randIndex2 = Math.floor(Math.random() * len);
+        let randIndex3 = Math.floor(Math.random() * len);
+        setRandomWords([words[randIndex1], words[randIndex2], words[randIndex3]]);
+        return [words[randIndex1], words[randIndex2], words[randIndex3]];
     }
 
     const ChooseWord = () => {
@@ -175,7 +179,11 @@ const Canvas = (props) => {
             <div className='choose-word'>
                 <div className='word-box'>
                     <h2>You are choosing word</h2>
-                    <button onClick={wordChoosen}>Close</button>
+                    <div className='word-buttons-box'>
+                        {
+                            randomWords.map((word, index) => <button className='word-button' key={index} onClick={() => wordChoosen(word)}>{word}</button>)
+                        }
+                    </div>
                 </div>
             </div>
         );
@@ -229,10 +237,6 @@ const Canvas = (props) => {
                     <h3 className='timer'>{timer}</h3>
                 </div>
             </div>
-            {/* {
-                (isChoosing) ? <ChooseWord /> : <Fragment />
-            } */}
-
         </Fragment>
     );
 }

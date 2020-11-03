@@ -104,7 +104,21 @@
     background-color:  rgb(46, 46, 46);
     color: white;
     display: flex;
+    flex-direction: column;
     width: 100vw;
     justify-content: center;
     align-items: center;
+}
+
+.word-buttons-box{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+    margin: 10px;
+}
+
+.word-button{
+    margin: 2px 5px;
+    padding: 5px 15px;
 }

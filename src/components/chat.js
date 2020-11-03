@@ -9,6 +9,9 @@ const Chat = (props) => {
     const [roomCode, setRoomCode] = useState(props.data.code);
     const [roomStat, setRoomStat] = useState(props.data);
     const [chats, setChats] = useState([]);
+    const [correctList, setCorrectList] = useState([]);
+
+    const [currentWord, setCurrentWord] = useState('');
     const username = props.user;
 
     useEffect(() => {
@@ -42,6 +45,12 @@ const Chat = (props) => {
             // console.log(chat)
             // console.log(chats)
         })
+
+        socket.on('wordChoosen', (word) => {
+            setCurrentWord(word);
+            //console.log(word);
+        })
+
     }, [])
 
 
@@ -52,7 +61,11 @@ const Chat = (props) => {
 
     const submit = (e) => {
         if (msg.length != 0) {
-            socket.emit('chat', { user: username, code: roomCode, msg: msg });
+            if (msg.toLowerCase() == currentWord.toLowerCase()) {
+                console.log('Correct')
+            } else {
+                socket.emit('chat', { user: username, code: roomCode, msg: msg });
+            }
             setMsg('');
         }
         document.querySelector('.chat-input').focus();
@@ -63,7 +76,11 @@ const Chat = (props) => {
             return
         }
         if (msg.length != 0) {
-            socket.emit('chat', { user: username, code: roomCode, msg: msg });
+            if (msg.toLowerCase() == currentWord.toLowerCase()) {
+                console.log('Correct')
+            } else {
+                socket.emit('chat', { user: username, code: roomCode, msg: msg });
+            }
             setMsg('');
         }
         document.querySelector('.chat-input').focus();

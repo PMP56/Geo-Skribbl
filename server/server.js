@@ -1,7 +1,9 @@
 const http = require('http');
 const path = require('path');
+const fs = require('fs');
 const express = require('express');
 const socket = require('socket.io');
+const { json } = require('express');
 
 const app = express();
 const server = http.createServer(app);
@@ -68,9 +70,21 @@ io.on('connection', (socket) => {
             io.in(code).emit('turnChange', 0)
         }
     })
+
+    socket.on('wordChoosen', ({ word, code }) => {
+        io.in(code).emit('wordChoosen', word);
+    })
 })
 
 app.use(express.static(path.join(__dirname, '../public')));
+app.get('/words', (req, res) => {
+    fs.readFile('./public/words.json', 'utf8', (err, data) => {
+        if (err) {
+            throw err;
+        }
+        res.send(JSON.parse(data));
+    })
+})
 
 const PORT = process.env.PORT || 5050;
 server.listen(PORT, () => {

@@ -9,7 +9,6 @@ const Chat = (props) => {
     const [roomCode, setRoomCode] = useState(props.data.code);
     const [roomStat, setRoomStat] = useState(props.data);
     const [chats, setChats] = useState([]);
-    const [correctList, setCorrectList] = useState([]);
 
     const [currentWord, setCurrentWord] = useState('');
     const username = props.user;
@@ -37,7 +36,7 @@ const Chat = (props) => {
             let formatTime = `${hour} : ${minute.substr(-2)}`;
             setChats(prevVal => ([
                 ...prevVal,
-                { username: data.user, message: data.msg, time: formatTime }
+                { username: data.user, message: data.msg, time: formatTime, correct: data.correct }
             ]));
             const chats = document.querySelector('.chats');
             chats.scrollTop = chats.scrollHeight;
@@ -61,11 +60,9 @@ const Chat = (props) => {
 
     const submit = (e) => {
         if (msg.length != 0) {
-            if (msg.toLowerCase() == currentWord.toLowerCase()) {
-                console.log('Correct')
-            } else {
-                socket.emit('chat', { user: username, code: roomCode, msg: msg });
-            }
+            const correct = msg.toLowerCase() == currentWord.toLowerCase();
+            console.log(correct);
+            socket.emit('chat', { user: username, code: roomCode, msg: msg, correct: correct });
             setMsg('');
         }
         document.querySelector('.chat-input').focus();
@@ -76,11 +73,9 @@ const Chat = (props) => {
             return
         }
         if (msg.length != 0) {
-            if (msg.toLowerCase() == currentWord.toLowerCase()) {
-                console.log('Correct')
-            } else {
-                socket.emit('chat', { user: username, code: roomCode, msg: msg });
-            }
+            const correct = msg.toLowerCase() == currentWord.toLowerCase();
+            console.log(correct);
+            socket.emit('chat', { user: username, code: roomCode, msg: msg, correct: correct });
             setMsg('');
         }
         document.querySelector('.chat-input').focus();
@@ -100,12 +95,24 @@ const Chat = (props) => {
         );
     }
 
+    const CorrectTile = (props) => {
+        return (
+            <div className='chat-correct-tile'>
+                <h6 className='chat-correct-subheader'>{`${props.data.username} guessed the word.`}</h6>
+            </div>
+        );
+    }
+
     return (
         <div className='chatbox'>
             <div className='chats'>
                 {
                     chats.map((user, index) =>
-                        <ChatTile data={user} key={index} />
+                        (!(user.correct)) ?
+                            <ChatTile data={user} key={index} />
+                            :
+                            <CorrectTile data={user} key={index} />
+
                     )
                 }
             </div>

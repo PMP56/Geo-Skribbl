@@ -8,6 +8,7 @@ import "./style/canvas.css";
 const socket = io();
 
 const Canvas = (props) => {
+    const isInitialMount = useRef(true);
     const canvasRef = useRef(null)
     const context = useRef(null)
     const [roomCode, setRoomCode] = useState(props.data.code);
@@ -88,14 +89,29 @@ const Canvas = (props) => {
             setIsChoosing(username == players[turn])
             setIsChoosen(false);
             generateRandomWords();
+            // isInitialMount.current = true;
+            // clearTimeout(startTimer);
             //checkTurn();
+        })
+
+        socket.on('wordChoosen', (word) => {
+            //isInitialMount.current = false;
+            setTimer(timer - 1);
+            //startTimer();
+            //setCurrentWord(word);
+            //console.log(word);
         })
 
     }, [0])
 
     useEffect(() => {
-        startTimer();
-    }, [timer])
+        if (isInitialMount.current) {
+            isInitialMount.current = false;
+        } else {
+            startTimer();
+            // Your useEffect code here to be run on update
+        }
+    }, [timer]);
 
 
     const mouseDown = ({ nativeEvent }) => {
@@ -144,13 +160,14 @@ const Canvas = (props) => {
 
     const startTimer = () => {
         //console.log(isChoosing);
-        setTimeout(() => {
+        return setTimeout(() => {
             if (timer > 1) {
                 setTimer(timer - 1);
             } else {
                 if (isChoosing) {
                     socket.emit('turnChange', { turn: turnIndex, code: roomCode, last: (turnIndex == players.length - 1) });
                 }
+                isInitialMount.current = true;
                 socket.emit('clear', roomCode);
                 setTimer(10);
             }

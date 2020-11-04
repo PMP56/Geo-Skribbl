@@ -14,6 +14,7 @@ const Chat = (props) => {
     const username = props.user;
 
     useEffect(() => {
+        console.log(roomStat);
         socket.emit('canvasJoin', roomCode);
         socket.on('message', message => {
             const date = new Date();
@@ -28,7 +29,7 @@ const Chat = (props) => {
             const chats = document.querySelector('.chats');
             chats.scrollTop = chats.scrollHeight;
         })
-        socket.on('chat', (data) => {
+        socket.on('chat', ({ room, data }) => {
             const date = new Date();
             const hour = date.getHours();
             const minute = "0" + date.getMinutes();
@@ -38,16 +39,18 @@ const Chat = (props) => {
                 ...prevVal,
                 { username: data.user, message: data.msg, time: formatTime, correct: data.correct }
             ]));
+            setRoomStat(room);
+            console.log(room)
             const chats = document.querySelector('.chats');
             chats.scrollTop = chats.scrollHeight;
-            //users.push({ username: 'LORD', message: chat })
-            // console.log(chat)
-            // console.log(chats)
+        })
+
+        socket.on('turnChange', ({ room, turn }) => {
+            setRoomStat(room);
         })
 
         socket.on('wordChoosen', (word) => {
             setCurrentWord(word);
-            //console.log(word);
         })
 
     }, [])
@@ -62,7 +65,7 @@ const Chat = (props) => {
         if (msg.length != 0) {
             const correct = msg.toLowerCase() == currentWord.toLowerCase();
             console.log(correct);
-            socket.emit('chat', { user: username, code: roomCode, msg: msg, correct: correct });
+            socket.emit('chat', { roomStat: roomStat, data: { user: username, code: roomCode, msg: msg, correct: correct } });
             setMsg('');
         }
         document.querySelector('.chat-input').focus();
@@ -75,7 +78,7 @@ const Chat = (props) => {
         if (msg.length != 0) {
             const correct = msg.toLowerCase() == currentWord.toLowerCase();
             console.log(correct);
-            socket.emit('chat', { user: username, code: roomCode, msg: msg, correct: correct });
+            socket.emit('chat', { roomStat: roomStat, data: { user: username, code: roomCode, msg: msg, correct: correct } });
             setMsg('');
         }
         document.querySelector('.chat-input').focus();

@@ -17,7 +17,7 @@ const Canvas = (props) => {
     const [brushColor, setBrushColor] = useState("black");
     const [brushWidth, setBrushWidth] = useState(5);
 
-    const [timer, setTimer] = useState(10);
+    const [timer, setTimer] = useState(30);
 
     const [words, setWords] = useState(props.words);
     const [randomWords, setRandomWords] = useState([]);
@@ -83,9 +83,15 @@ const Canvas = (props) => {
             context.current.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
         })
 
-        socket.on('turnChange', (turn) => {
+        socket.on('chat', ({ room, data }) => {
+            setRoomStat(room);
+        })
+
+        socket.on('turnChange', ({ room, turn }) => {
             console.log(turn);
             setTurnIndex(turn);
+            setRoomStat(room);
+            //console.log(room);
             setIsChoosing(username == players[turn])
             setIsChoosen(false);
             generateRandomWords();
@@ -165,11 +171,11 @@ const Canvas = (props) => {
                 setTimer(timer - 1);
             } else {
                 if (isChoosing) {
-                    socket.emit('turnChange', { turn: turnIndex, code: roomCode, last: (turnIndex == players.length - 1) });
+                    socket.emit('turnChange', { turn: turnIndex, code: roomCode, last: (turnIndex == players.length - 1), roomStat: roomStat });
                 }
                 isInitialMount.current = true;
                 socket.emit('clear', roomCode);
-                setTimer(10);
+                setTimer(30);
             }
         }, 1000);
     }

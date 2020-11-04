@@ -21,8 +21,18 @@ io.on('connection', (socket) => {
         //console.log('Disconnect');
     });
 
-    socket.on('chat', (data) => {
-        io.in(data.code).emit('chat', data);
+    socket.on('chat', ({ roomStat, data }) => {
+        // console.log(roomStat)
+        if (data.user in (roomStat.tempPoints)) {
+            if (data.correct) {
+                for (users in roomStat.tempPoints) {
+                    roomStat.tempPoints[users] += 100;
+                }
+            }
+        } else {
+            (roomStat.tempPoints)[data.user] = 0;
+        }
+        io.in(data.code).emit('chat', { room: roomStat, data: data });
     });
 
     socket.on('clear', (code) => {
@@ -46,7 +56,7 @@ io.on('connection', (socket) => {
 
         socket.join(code);
         if (!(code in rooms)) {
-            rooms[code] = { owner: user, code: code, members: [user] };
+            rooms[code] = { owner: user, code: code, members: [user], tempPoints: {}, points: {} };
         } else {
             rooms[code]['members'].push(user);
         }
@@ -63,11 +73,25 @@ io.on('connection', (socket) => {
         io.in(code).emit('start');
     })
 
-    socket.on('turnChange', ({ turn, code, last }) => {
-        if (!last) {
-            io.in(code).emit('turnChange', turn + 1)
+    socket.on('turnChange', ({ turn, code, last, roomStat }) => {
+        console.log(roomStat);
+        if (Object.keys(roomStat.points).length == 0) {
+            roomStat.points = roomStat.tempPoints;
+            roomStat.tempPoints = {};
         } else {
-            io.in(code).emit('turnChange', 0)
+            for (name in roomStat.tempPoints) {
+                if (name in roomStat.points) {
+                    roomStat.points[name] += roomStat.tempPoints[name];
+                } else {
+                    roomStat.points[name] = roomStat.tempPoints[name];
+                }
+            }
+            roomStat.tempPoints = {};
+        }
+        if (!last) {
+            io.in(code).emit('turnChange', { room: roomStat, turn: (turn + 1) })
+        } else {
+            io.in(code).emit('turnChange', { room: roomStat, turn: 0 })
         }
     })
 

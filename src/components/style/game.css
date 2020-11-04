@@ -30,3 +30,11 @@ body{
     flex-direction: row;
     justify-content: flex-start;
 }
+
+.circular-bar{
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: darkviolet;
+}

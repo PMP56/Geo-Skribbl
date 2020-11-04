@@ -1,6 +1,8 @@
+import { CircularProgress } from '@material-ui/core';
 import React, { Fragment, useEffect, useState } from 'react';
 import Canvas from './canvas';
 import Chat from './chat';
+
 
 import './style/game.css';
 
@@ -22,7 +24,7 @@ const Game = (props) => {
     return (
         <Fragment>
             {
-                (!loaded) ? <Fragment /> :
+                (!loaded) ? <CircularProgress className='circular-bar' /> :
                     <div className='app-body'>
                         <Canvas user={props.user} data={props.data} words={words} />
                         <Chat user={props.user} data={props.data} />

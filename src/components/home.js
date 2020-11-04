@@ -46,7 +46,9 @@ const Home = () => {
         let letters = document.getElementsByClassName('title-letter');
         Array.from(letters).forEach((letter) => {
             let time = Math.random() * (4 - 2) + 2;
-            let colors = ['red', 'blue', 'pink', 'purple', 'orange', 'cyan', 'limegreen', 'yellow', 'brown', 'darkred', 'tomato']
+            let colors = ['red', 'blue', '#2E3D7C', 'cyan', 'limegreen', 'yellow', 'brown', 'darkred', 'tomato', '#FF3333',
+                '#0092CC', '#BA292E', '#E15D3A', '#FFA73C', '#F55B8B', 'teal'
+            ]
             let colorIndex = Math.floor(Math.random() * colors.length)
 
             let random = Math.floor(Math.random() * (Math.floor(120) - Math.ceil(-90)) + Math.ceil(-90));

@@ -212,6 +212,20 @@ const Canvas = (props) => {
         );
     }
 
+    const ScoreCard = (props) => {
+        let point = 0;
+        const name = props.name
+        if (name in roomStat.points) {
+            point = roomStat.points[name]
+        }
+        return (
+            <div className='score-card'>
+                <h4 style={{ margin: '5px 5px', fontSize: '14px', fontFamily: 'monospace' }}>{name}</h4>
+                <h6 style={{ margin: '5px 5px', fontSize: '20px', fontFamily: 'monospace' }}>{point}</h6>
+            </div>
+        );
+    }
+
     return (
         <Fragment>
             {
@@ -258,6 +272,11 @@ const Canvas = (props) => {
                 <div className='canvas-container'>
                     <canvas id="canvas" ref={canvasRef} onMouseDown={mouseDown} onMouseMove={mouseMove} onMouseUp={mouseUp}></canvas>
                     <h3 className='timer'>{timer}</h3>
+                    <div className='score-board'>
+                        {
+                            roomStat.members.map((member, index) => <ScoreCard name={member} key={index} />)
+                        }
+                    </div>
                 </div>
             </div>
         </Fragment>

@@ -23,15 +23,19 @@ io.on('connection', (socket) => {
 
     socket.on('chat', ({ roomStat, data }) => {
         // console.log(roomStat)
-        if (data.user in (roomStat.tempPoints)) {
-            if (data.correct) {
+        if (data.correct) {
+            if (data.user in (roomStat.tempPoints)) {
                 for (users in roomStat.tempPoints) {
                     roomStat.tempPoints[users] += 100;
                 }
+            } else {
+                for (users in roomStat.tempPoints) {
+                    roomStat.tempPoints[users] += 100;
+                }
+                (roomStat.tempPoints)[data.user] = 100;
             }
-        } else {
-            (roomStat.tempPoints)[data.user] = 0;
         }
+
         io.in(data.code).emit('chat', { room: roomStat, data: data });
     });
 

@@ -10,6 +10,8 @@ const Chat = (props) => {
     const [roomStat, setRoomStat] = useState(props.data);
     const [chats, setChats] = useState([]);
 
+    const [guessed, setGuessed] = useState(false);
+
     const [currentWord, setCurrentWord] = useState('');
     const username = props.user;
 
@@ -47,6 +49,7 @@ const Chat = (props) => {
 
         socket.on('turnChange', ({ room, turn }) => {
             setRoomStat(room);
+            setGuessed(false);
         })
 
         socket.on('wordChoosen', (word) => {
@@ -62,11 +65,14 @@ const Chat = (props) => {
     }
 
     const submit = (e) => {
-        if (msg.length != 0) {
+        if (msg.length != 0 && !guessed) {
             const correct = msg.toLowerCase() == currentWord.toLowerCase();
-            console.log(correct);
-            socket.emit('chat', { roomStat: roomStat, data: { user: username, code: roomCode, msg: msg, correct: correct } });
             setMsg('');
+            if (correct) {
+                setGuessed(true);
+            }
+            //console.log(correct);
+            socket.emit('chat', { roomStat: roomStat, data: { user: username, code: roomCode, msg: msg, correct: correct } });
         }
         document.querySelector('.chat-input').focus();
 
@@ -75,11 +81,14 @@ const Chat = (props) => {
         if (e.key != 'Enter') {
             return
         }
-        if (msg.length != 0) {
+        if (msg.length != 0 && !guessed) {
             const correct = msg.toLowerCase() == currentWord.toLowerCase();
-            console.log(correct);
-            socket.emit('chat', { roomStat: roomStat, data: { user: username, code: roomCode, msg: msg, correct: correct } });
             setMsg('');
+            if (correct) {
+                setGuessed(true);
+            }
+            //console.log(correct);
+            socket.emit('chat', { roomStat: roomStat, data: { user: username, code: roomCode, msg: msg, correct: correct } });
         }
         document.querySelector('.chat-input').focus();
     }

@@ -17,7 +17,7 @@ const Canvas = (props) => {
     const [brushColor, setBrushColor] = useState("black");
     const [brushWidth, setBrushWidth] = useState(5);
 
-    const [timer, setTimer] = useState(30);
+    const [timer, setTimer] = useState(90);
 
     const [words, setWords] = useState(props.words);
     const [randomWords, setRandomWords] = useState([]);
@@ -175,7 +175,7 @@ const Canvas = (props) => {
                 }
                 isInitialMount.current = true;
                 socket.emit('clear', roomCode);
-                setTimer(30);
+                setTimer(90);
             }
         }, 1000);
     }
